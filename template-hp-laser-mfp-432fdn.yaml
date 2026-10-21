@@ -1,0 +1,57 @@
+zabbix_export:
+  version: '7.4'
+  template_groups:
+    - uuid: d3946f7107f14862a29e3e843fca2c99
+      name: Templates/Printers
+  templates:
+    - uuid: 9c589c87884a461484cd70d5f00a1f60
+      template: 'HP Laser MFP 432fdn SNMP'
+      name: 'HP Laser MFP 432fdn'
+      description: 'Template personalizado para monitoramento da impressora HP Laser MFP 432fdn via SNMPv2c. Inclui contador de páginas e monitoramento de suprimentos.'
+      groups:
+        - name: Templates/Printers
+      items:
+        - uuid: 76eb9f914d9f47c1b618a1e057588dfa
+          name: 'Fusor — nível restante'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.10.2.1.4.1.1
+          key: hp.fuser.remaining
+          delay: 5m
+          units: '%'
+          description: 'Estima a vida útil restante do fusor da HP Laser MFP 432fdn com base no contador total de páginas impressas, considerando uma vida útil estimada de 90.000 páginas. O percentual é calculado por meio de pré-processamento JavaScript e representa uma estimativa específica para este modelo, não uma leitura direta do fusor via SNMP.'
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - 'return Math.max(0, Math.min(100, Math.round((1 - Number(value) / 90000) * 100)));'
+        - uuid: 8e776958893c4eb9a1f78d6afb32cdae
+          name: 'Unidade de imagem — nível restante'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.9.1.2
+          key: hp.imaging.remaining
+          delay: 5m
+          units: '%'
+          description: 'Monitora o nível restante reportado pela unidade de imagem da HP Laser MFP 432fdn via SNMP.'
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - 'return Math.round((Number(value) / 30000) * 100);'
+        - uuid: 5efa7fae524b41a786a95de20ad407e4
+          name: 'Contador total de paginas'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.10.2.1.4.1.1
+          key: hp.pages.total
+          delay: 5m
+          units: pages
+          description: 'Contador total de páginas impressas pela HP Laser MFP 432fdn.'
+        - uuid: 3db0c17e8e1c4b758f149fe818de7c65
+          name: 'Toner preto - nível restante'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.9.1.1
+          key: hp.toner.black.remaining
+          delay: 5m
+          units: '%'
+          description: 'Monitora o nível restante reportado pelo SNMP para o cartucho de toner preto da HP Laser MFP 432fdn. Valor bruto em páginas estimadas, conforme reportado pela impressora.'
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '0.0066666667'
