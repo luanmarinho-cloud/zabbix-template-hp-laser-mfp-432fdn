@@ -58,4 +58,6 @@ Antes de utilizar o monitoramento em produção, compare os valores recebidos vi
 
 ## Licença
 
-A licença será definida antes da distribuição do projeto sob termos de uso específicos.
+Este projeto está licenciado sob a licença MIT.
+
+Você pode usar, copiar, modificar e redistribuir este template, respeitando os termos da licença.
